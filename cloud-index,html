@@ -1,0 +1,888 @@
+
+<!DOCTYPE HTML>
+
+<html lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="renderer" content="webkit|ie-comp|ie-stand" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="/schoolcloud-oauthserver/css/base.css" />
+    <link rel="stylesheet" href="/schoolcloud-oauthserver/css/bootstrap.css" />
+    <!-- 系统读取系统配置的css -->
+    <link href="/schoolcloud-oauthserver/css/login.css" rel="stylesheet" />
+    <!--
+    <link rel='stylesheet' href='../public/css/login.css' th:href="@{/css/login.css}"/>
+     -->
+    <script type="text/javascript" src="/schoolcloud-oauthserver/js/jquery-1.12.4.min.js"></script>
+    <script type="text/javascript" src="/schoolcloud-oauthserver/js/crypto-js/crypto-js.js"></script>
+
+    <script type="text/javascript" src="/schoolcloud-oauthserver/js/bootstrap/bootstrap.js"></script>
+    <title>云平台登录</title>
+</head>
+
+<body>
+<div id="wrap">
+    <div class="pos-relative">
+        <header class="text-center">
+            <img id="schoolLogo" src="" height="78" alt="" />
+        </header>
+        <div class="content">
+            <section class="login_wrap switchover anterior">
+                <div class="relative" id="mainLogin">
+                    <div class="interlayer_a text-center">登录</div>
+                    <div class="inner opacity">
+                        <h4 class="title">
+                            <span id="titleText">账号登录</span>
+                            <!--<a href="javascript:void(0);"
+                               class="pull-right rwm_wrap"> <span class="">点击下载APP</span>
+                                <b><img id="QRCodeUrl"/>
+                                </b>
+                            </a>-->
+                        </h4>
+                        <div class="clearfix">
+                            <form id="loginform" name="f" method="post" class="form-signin pull-left" style="width: 230px;" action="/schoolcloud-oauthserver/login">
+                                <div class="form_group">
+                                    <label for="userName" class="label_focus">用户名</label> <input type="text" name="username" class="form_control form_input input_focus" id="userName" />
+                                </div>
+                                <div class="form_group">
+                                    <label for="psw" class="label_focus">密码</label> <input type="password" name="password" class="form_control form_input input_focus" id="psw" />
+                                </div>
+                                <div class="form_group" id="loginValidateCode" style="display: none">
+                                    <label for="inputValidateCode" class="label_focus">验证码</label> <input type="text" name="inputValidateCode" class="form_control form_input input_focus" id="inputValidateCode" style="width:100px;" maxlength="6" />
+                                    <div style="margin-left:113px;margin-top:-50px;">
+                                        <img id="loginValidateCodeImg" height="38" width="110" style="cursor: pointer;" onclick="reloadValidateCode()" src="/schoolcloud-oauthserver/img/validateCode" />
+                                    </div>
+                                </div>
+                                <div style="text-align:right;color:#308de2;cursor:pointer;display:none;" onclick="smsClick()" id="isopensms">验证码快捷登录
+                                </div>
+                                <p class="tip_sub">
+                                    <small id="errMes"></small>
+                                </p>
+                                <div class="btn_box_ text-center">
+                                    <a href="javascript:;" class="btn btn_default" id="a_login" onclick="sub()">登录</a>
+                                    <a id="isopenregister" href="javascript:;" class="btn btn_default" style="margin-left:10px;display:none;" onclick="registerClick()">注册</a>
+                                </div>
+                            </form>
+                            <form id="smsloginform" name="f" method="post" class="form-signin pull-left" style="display:none;width: 230px;" action="/schoolcloud-oauthserver/sms/login">
+                                <div class="form_group">
+                                    <label for="mobile" class="label_focus">手机号</label> <input type="text" name="mobile" class="form_control form_input input_focus" id="mobile" />
+                                </div>
+                                <div class="form_group">
+                                    <label for="smscode" class="label_focus">验证码</label> <input type="text" name="smscode" class="form_control form_input input_focus" id="smscode" style="width:125px;" maxlength="6" />
+                                    <div style="margin-left:133px;margin-top:-30px;"><a href="javascript:;" class="btn btn_send text-center" id="smsnotify" onclick="smsNotify()">发送验证码</a>
+                                    </div>
+                                </div>
+                                <div style="text-align:right;color:#308de2;cursor:pointer;" onclick="accountClick()">
+                                    账号登录
+                                </div>
+                                <p class="tip_sub">
+                                    <small id="smsErrorMes"></small>
+                                </p>
+                                <div class="btn_box_ text-center">
+                                    <a href="javascript:;" class="btn btn_default" id="a_login" onclick="smsLogin()">登录</a>
+                                    <a id="isopenregistersms" href="javascript:;" class="btn btn_default" style="margin-left:10px;display:none;" onclick="registerClick()">注册</a>
+                                </div>
+                            </form>
+                            <div class="pull-right rwm_box">
+                                <img id="qrCodeLoginImg" width="158" height="158" />
+                                <div class="text-center">
+                                    <small>APP扫码登录<!--（点击右上角下载）--></small>
+                                </div>
+
+                                <div class="text-center">
+                                    
+                                </div>
+
+                            </div>
+                            
+                        </div>
+
+                        <!-- 二维码登录 -->
+                        <!-- 	<section class="rwm_box text-center" style="display: none">
+                                <img id="qrCodeLoginImg" width="158" height="158" /> <a
+                                    href="javascript:;" class="btn btn_default" id="rwm_back">返回</a>
+                            </section> -->
+                    </div>
+                </div>
+
+                <div class="inner opacity" id="accountList" style="display: none">
+                    <h4 class="title">选择身份</h4>
+                    <form action="" style="width: 435px; margin: auto;">
+                        <div class="form_group" id="accounts" style="margin-top:20px;min-height: 90px;line-height: 30px;">
+                        </div>
+                        <div class="btn_box_ text-center">
+                            <a href="javascript:;" class="btn btn_default" id="confirm_password" onclick="switchAccount()">确定</a>
+                        </div>
+                    </form>
+                </div>
+
+            </section>
+            <section class="forget_wrap switchover back">
+                <div class="relative">
+                    <div class="inner opacity" id="fromforgetpass">
+                        <h4 class="title">忘记密码</h4>
+                        <form action="" style="width: 340px; margin: auto;">
+                            <div class="form_group">
+                                <label for="account" class="label_focus">手机号码/用户名</label> <input type="text" class="form_control form_input input_focus" id="account" />
+                            </div>
+                            <div class="forget_yzm login_mbtm6 inline-middle">
+                                <section>
+                                    <label for="picYzm" class="label_focus">验证码</label> <input type="text" class="form_control form_input input_focus" id="picYzm" maxlength="4" />
+                                </section>
+                                <img id="imgVerify" height="38" width="110" />
+                                <a href="javascript:;" class="text-center" style="font-size:13px;margin-top:22px;margin-left:10px;" id="resetone" onclick="getVerify()">换一张</a>
+                            </div>
+                            <p class="tip_sub tip_sub_1">
+                                <small></small>
+                            </p>
+                            <div class="btn_box_ text-center">
+                                <a href="javascript:;" class="btn btn_default" id="confirm_password" onclick="queryPassWord()">下一步</a>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="inner opacity" id="forgetpass" style="display: none">
+                        <h4 class="title">忘记密码</h4>
+                        <form action="" style="width: 340px; margin: auto;">
+                            <div class="form_group">
+                                <label for="forgetUserName" class="label_focus"></label> <input type="text" class="form_control form_input input_focus" id="forgetUserName" readonly="readonly" />
+                            </div>
+                            <!--								<div class="form_group" id="selUserId">-->
+                            <!--									<label for="userId" class="label_focus"></label>-->
+                            <!--									<select class="form_control form_input input_focus"  id="userId"  readonly="readonly">-->
+                            <!--									</select>-->
+                            <!--								</div>-->
+                            <div class="forget_yzm login_mbtm6 inline-middle">
+                                <section>
+                                    <label for="forgetYz" class="label_focus">验证码</label> <input type="text" class="form_control form_input input_focus" id="forgetYz" />
+                                </section>
+                                <a href="javascript:;" class="btn btn_send text-center" id="notify" onclick="notify()">发送验证码</a>
+                            </div>
+                            <p class="tip_sub">
+                                <small></small>
+                            </p>
+                            <div class="btn_box_ text-center">
+                                <a href="javascript:;" class="btn btn_default" id="confirm_password" onclick="resetPassWord()">下一步</a>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="inner opacity" id="modPass" style="display: none">
+                        <h4 class="title">忘记密码</h4>
+                        <form action="" style="width: 435px; margin: auto;">
+                            <div style="margin-top:10px;">请选择要重置密码的账号</div>
+                            <div class="form_group" id="userids" style="margin-top:20px;min-height: 90px;line-height: 30px;">
+
+                            </div>
+                            <div class="btn_box_ text-center">
+                                <a href="javascript:;" class="btn btn_default" id="confirm_password" onclick="resetPassWordNext()">下一步</a>
+                            </div>
+                        </form>
+                    </div>
+                    <!-- 修改密码 -->
+                    <div class="inner opacity" style="display: none" id="modPass1">
+                        <h4 class="title">修改密码</h4>
+                        <form action="" style="width: 340px; margin: auto;">
+                            <div class="form_group">
+                                <label for="forgetUserName" class="label_focus">新密码</label> <input type="password" class="form_control form_input input_focus" id="newPassword" />
+                            </div>
+                            <div class="form_group">
+                                <label for="forgetUserName" class="label_focus">确认新密码</label> <input type="password" class="form_control form_input input_focus" id="newPasswordAgain" />
+                            </div>
+                            <p class="tip_sub">
+                                <small></small>
+                            </p>
+                            <div class="btn_box_ text-center">
+                                <a href="javascript:;" class="btn btn_default" id="change_password" onclick="savePasswd()">确定</a>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="interlayer_b text-center ">忘记密码</div>
+                </div>
+            </section>
+        </div>
+
+        <div class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" id="accountModal">
+            <div class="modal-dialog modal-sm" role="document">
+                <div class="modal-content">
+                    ...
+                </div>
+            </div>
+        </div>
+
+        <div class="text-center tip_wrap">
+            <div>
+                支持浏览器：<a href="https://support.microsoft.com/zh-cn/help/17621/internet-explorer-downloads" target="_blank">IE10+</a>、
+                <a href="http://baoku.360.cn/soft/show/appid/105189" target="_blank">谷歌</a>、
+                <a href="http://baoku.360.cn/soft/show/appid/104511" target="_blank">火狐</a>、
+                <a href="https://www.apple.com/cn/safari/" target="_blank">Safari</a>
+            </div>
+            <div id="filingFinfo">
+
+            </div>
+
+
+            <!-- <div>
+                即时通讯下载: <a href="http://dev.xiaotunyun.com/download/imchat.exe">点击下载</a>
+            </div> -->
+        </div>
+        <!-- <section class="copy_right">
+            <div class="clearfix copy_right_info">
+                <img src="img/copy-right-logo.png" class="pull-left" alt="" />
+                <span class="pull-right">Copyright &copy;2017 北京中科联诚软件股份有限公司 版权所有</span>
+            </div>
+        </section> -->
+    </div>
+
+</div>
+<script type="text/javascript">
+    /*<![CDATA[*/
+    function smsClick() {
+        $("#titleText").text("验证码快捷登录");
+        $("#loginform").hide();
+        $("#smsloginform").show();
+    }
+
+    function registerClick() {
+        var pathurl = '/schoolcloud-oauthserver';
+        window.open(pathurl + "/user/register");
+    }
+
+    function accountClick() {
+        $("#titleText").text("账号登录");
+        $("#smsloginform").hide();
+        $("#loginform").show();
+    }
+
+    var tips = '';
+    var regular = '';
+    var pathurl = '/schoolcloud-oauthserver';
+    var interval;//二维码登录 定时检测器标识
+    ;//点击切换输入框文字动画
+    (function () {
+        var inputF = $(".input_focus");
+        for (var i = 0; i < inputF.length; i++) {
+            if ($(inputF[i]).val() == '' || $(inputF[i]).val() == null) {
+                $(inputF[i]).siblings(".label_focus").removeClass("up");
+            } else {
+                $(inputF[i]).siblings(".label_focus").addClass("up");
+            }
+        }
+        $(inputF).focus(function () {
+            var fn = this;
+            if ($(fn).val() == '' || $(fn).val() == null) {
+                $(fn).siblings(".label_focus").addClass("up");
+            } else {
+                return false
+            }
+        })
+        $(inputF).blur(function () {
+            var fn = this;
+            if ($(fn).val() == '' || $(fn).val() == null) {
+                $(fn).siblings(".label_focus").removeClass("up")
+            } else {
+                return false
+            }
+        })
+    })();
+
+    ;//二维码登录
+    (function () {
+        getVerify();
+        //二维码登录逻辑
+        var isOpenAppLogin='1';
+        if(isOpenAppLogin!='0'){
+            $("#qrCodeLoginImg").attr("src", '/schoolcloud-oauthserver' + "/qrcode/createQRCodeImage?" + new Date().getTime());
+            var timesRun = 0;//执行次数
+            interval = setInterval(function () {
+                    timesRun += 1;
+                    if (timesRun > 30) {
+                        clearInterval(interval);//终止轮询
+                    }
+                    $.ajax({
+                        type: "post",
+                        url: pathurl + "/qrcode/checkQRcodeUidStatus?" + new Date().getTime(),
+                        dataType: "json",
+                        success: function (msg) {
+                            if (msg == 3) {
+                                clearInterval(interval);//终止轮询
+                                window.location.href = pathurl + "/qrcode/autologin";
+                            } else if (msg == -1) {//异常信息
+                                clearInterval(interval);//终止轮询
+                            }
+                        },
+                        error: function (errmsg) {
+                            clearInterval(interval);//终止轮询
+                        },
+                    })
+                }, 2000
+            );
+        }
+
+
+        //设置一分钟自动刷新机制
+        setInterval(function () {
+            //二维码登录逻辑
+            $("#qrCodeLoginImg").attr("src", '/schoolcloud-oauthserver' + "/qrcode/createQRCodeImage?" + new Date().getTime());
+            var timesRun = 0;//执行次数
+            interval = setInterval(function () {
+                    timesRun += 1;
+                    if (timesRun > 30) {
+                        clearInterval(interval);//终止轮询
+                    }
+                    $.ajax({
+                        type: "post",
+                        url: pathurl + "/qrcode/checkQRcodeUidStatus?" + new Date().getTime(),
+                        dataType: "json",
+                        success: function (msg) {
+                            if (msg == 3) {
+                                clearInterval(interval);//终止轮询
+                                window.location.href = pathurl + "/qrcode/autologin";
+                            } else if (msg == -1) {//异常信息
+                                clearInterval(interval);//终止轮询
+                            }
+                        },
+                        error: function (errmsg) {
+                            clearInterval(interval);//终止轮询
+                        },
+                    })
+                }, 2000
+            );
+        }, 60000);
+    })();
+
+    ;//点击切换忘记密码与登录
+    (function () {
+        var switchover = $(".switchover");
+
+        switchover.click(function () {
+            $(this).addClass("anterior").removeClass("back")
+                .siblings().addClass("back").removeClass("anterior");
+        });
+    })();
+
+    (function () {
+        document.onkeydown = function (e) {
+            var ev = document.all ? window.event : e;
+            if (ev.keyCode == 13) {
+                sub();
+            }
+        }
+    })();
+    (function () {
+        $("#userName,#psw,#forgetUserName,#forgetYz").focus(function () {
+            $("#errMes").text("");
+            $(".tip_sub small").text("");
+        })
+    })();
+
+    //学校logo
+    var pathurl = '/schoolcloud-oauthserver';
+    $.ajax({
+        url: pathurl + "/findCloudMes",
+        type: "POST",
+        async: true,
+        success: function (msg) {
+
+            if (msg.content.filingFinfo != "") {
+                $("#filingFinfo").html(msg.content.filingFinfo);
+            }
+
+            if (msg.content.isopen == "open") {
+                $("#isopensms").show();
+            } else {
+                $("#isopensms").hide();
+            }
+
+            if (msg.content.open_validatecode_flag != null && msg.content.open_validatecode_flag == "1") {
+                $("#loginValidateCode").show();
+            } else {
+                $("#loginValidateCode").hide();
+            }
+
+            if (msg.content.isopenregister == "open") {
+                $("#isopenregister").show();
+                $("#isopenregistersms").show();
+            } else {
+                $("#isopenregister").hide();
+                $("#isopenregistersms").hide();
+            }
+
+            $("#schoolLogo").attr("src", msg.content.showpath);
+        }
+    });
+
+    //app下载二维码
+    /*var pathurl = '/schoolcloud-oauthserver';
+    $.ajax({
+        url: pathurl + "/qrcode/queryQRCodeUrl",
+        type: "POST",
+        async: true,
+        success: function (msg) {
+            if (msg != "" && msg != "'") {
+                $("#QRCodeUrl").attr("src", msg);
+            }
+        }
+    });*/
+
+
+    function sub() {
+        var redirectURL = location.href;
+        var username = $("#userName").val();
+        var password = $("#psw").val();
+        var inputValidateCode = $("#inputValidateCode").val();
+        var redirectURL = location.href;
+        var auth_url = null;   //取值auth_url
+        var pathurl = '/schoolcloud-oauthserver';
+        $.ajax({
+            type: "POST",
+            url: pathurl + "/login",
+            data: {
+                "username": encryptByDES(username, a1),
+                "password": encryptByDES(password, a1),
+                "inputValidateCode": inputValidateCode,
+                "redirectURL": redirectURL
+            },
+            dataType: "json",
+            async: false,
+            success: function (msg) {
+                var jsonObj = eval(msg);
+                jsonObj = jsonObj[0];
+                if (jsonObj.success == "true") {
+
+                    if(jsonObj.childAccounts!=null && jsonObj.childAccounts.length>0){
+                        toAuthUrl=auth_url;
+                        toRedirectURL=jsonObj.redirectURL;
+                        showAccountList(jsonObj);
+                    }else{
+                        //如果登录成功，则跳转到。
+                        if (auth_url != null) {
+                            location.href = auth_url;
+                        } else {
+                            location.href = jsonObj.redirectURL;
+                        }
+                    }
+
+
+                } else if (jsonObj.success == "false") {
+                    if (jsonObj.errorMsg == 'validateCodeError') {
+                        $("#errMes").text("验证码错误");
+                    } else {
+                        $("#errMes").text("用户名密码错误");
+                    }
+                    reloadValidateCode();
+                }
+
+            },
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+            },
+            beforeSend: function () {
+            }
+        });
+    }
+
+    //展示关联的子账号列表
+    function showAccountList(jsonObj) {
+
+        $("#mainLogin").css("display", "none");
+        $("#accountList").css("display", "block");
+        var childAccounts = jsonObj.childAccounts;
+
+        for (var i = 0; i < childAccounts.length; i++) {
+            var isCheck = "";
+            if (i == 0) {
+                isCheck = "checked='checked'";
+            }
+            if(childAccounts[i].userName==$("#userName").val()){
+                $("#accounts").append("<input type='radio' " + isCheck + " value='" + childAccounts[i].userName + "' name='switchAccount' style='margin-left:35px;margin-right: 8px;'>" + "继续使用当前身份" + "</input><br>");
+            }else{
+                $("#accounts").append("<input type='radio' " + isCheck + " value='" + childAccounts[i].userName + "' name='switchAccount' style='margin-left:35px;margin-right: 8px;'>" + "身份：" + childAccounts[i].name + "</input><br>");
+            }
+
+        }
+    }
+
+    var toAuthUrl="";
+    var toRedirectURL="";
+    //选择身份进入系统
+    function switchAccount() {
+        $.ajax({
+            type: "POST",
+            url: pathurl + "/switchAccount",
+            data: {
+                "username": $('input[name="switchAccount"]:checked').val()
+            },
+            dataType: "json",
+            async: false,
+            success: function (msg) {
+                if (msg.resultCode=='0') {
+                    //如果登录成功，则跳转到。
+                    if (toAuthUrl != null) {
+                        location.href = toAuthUrl;
+                    } else {
+                        location.href = toRedirectURL;
+                    }
+                }
+            },
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+            },
+            beforeSend: function () {
+            }
+        });
+    }
+
+    //刷新验证码
+    function reloadValidateCode() {
+        $("#inputValidateCode").val("");
+        $("#loginValidateCodeImg").attr("src", pathurl + "/img/validateCode?" + new Date().getTime());
+    }
+
+    //验证码每55s刷新一次
+    var validateCodeInterval = setInterval(function () {
+        $("#loginValidateCodeImg").attr("src", pathurl + "/img/validateCode?" + new Date().getTime());
+        }, 55000
+    );
+
+    //短信登录
+    function smsLogin() {
+        $("#smsErrorMes").text("");
+        var mobile = $.trim($("#mobile").val());
+        var smscode = $.trim($("#smscode").val());
+        if ("" == mobile) {
+            $("#smsErrorMes").text("手机号码不能为空");
+            return;
+        }
+        if ("" == smscode) {
+            $("#smsErrorMes").text("验证码不能为空");
+            return;
+        }
+
+        var redirectURL = location.href;
+        var auth_url = null;//取值auth_url
+        var pathurl = '/schoolcloud-oauthserver';
+        $.ajax({
+            type: "POST",
+            url: pathurl + "/sms/login",
+            data: {"mobile": mobile, "smscode": smscode, "redirectURL": redirectURL},
+            dataType: "json",
+            async: false,
+            success: function (msg) {
+                var jsonObj = eval(msg);
+                jsonObj = jsonObj[0];
+                if (jsonObj.success == "true") {
+
+                    if(jsonObj.childAccounts!=null && jsonObj.childAccounts.length>0){
+                        toAuthUrl=auth_url;
+                        toRedirectURL=jsonObj.redirectURL;
+                        showAccountList(jsonObj);
+                    }else{
+                        //如果登录成功，则跳转到。
+                        if (auth_url != null) {
+                            location.href = auth_url;
+                        } else {
+                            location.href = jsonObj.redirectURL;
+                        }
+                    }
+
+                } else {
+                    $("#smsErrorMes").text("验证码错误");
+                }
+            },
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                $("#smsErrorMes").text("验证码错误");
+            },
+            beforeSend: function () {
+            }
+        });
+    }
+
+    //获取验证码
+    function getVerify() {
+        var pathurl = '/schoolcloud-oauthserver';
+        $("#imgVerify").attr("src", pathurl + "/sys/getVerify?" + Math.random());
+    }
+
+    function smsNotify() {
+        $("#smsErrorMes").text("");
+        var redirectURL = location.href;
+        var isMob = /^(?:13\d|14\d|15\d|18\d|17\d)\d{5}(\d{3}|\*{3})$/;
+        var pathurl = '/schoolcloud-oauthserver';
+        var loginPhone = $.trim($("#mobile").val());
+        if ("" == loginPhone) {
+            $("#smsErrorMes").text("手机号码不能为空");
+            return;
+        } else if (!isMob.test(loginPhone)) {
+            $("#smsErrorMes").text("请输入正确的手机号码");
+            return;
+        }
+        $.ajax({
+            url: pathurl + "/sms/code?mobile=" + loginPhone,
+            type: "post",
+            async: false,
+            success: function (data) {
+                if (data.resultCode == 0) {
+                    var second = 60; // 剩余秒数
+                    //然后写一个定时器
+                    var mestimer = window.setInterval(function () {
+                        second--;
+                        $("#smsnotify").removeAttr("onclick");
+                        $("#smsnotify").removeClass("btn_send").addClass("btn_send_off");
+                        $("#smsnotify").html("倒计时" + second + "秒");
+                        if (second == -1) {
+                            $("#smsnotify").attr("onclick", "smsNotify()");
+                            $("#smsnotify").html("重新发送");
+                            clearInterval(mestimer);
+                            $("#smsnotify").css("display", "inline-block");
+                            $("#smsnotify").removeClass("btn_send_off").addClass("btn_send");
+                        }
+                    }, 1000);
+                } else {
+                    if (data.resultCode == -1) {
+                        $("#smsErrorMes").text(data.content.msg);
+                    } else {
+                        $("#smsErrorMes").text("发送验证码失败，请联系管理员");
+                    }
+                }
+            }
+        })
+    }
+
+    //点击发送验证码
+    function notify() {
+        var redirectURL = location.href;
+        var isMob = /^(?:13\d|14\d|15\d|18\d|17\d)\d{5}(\d{3}|\*{3})$/;
+        var pathurl = '/schoolcloud-oauthserver';
+        var loginPhone = $.trim($("#account").val());
+        /* if("" == loginPhone){
+            $(".tip_sub small").text("手机号码不能为空");
+            return;
+        }else if(!isMob.test(loginPhone)){
+            $(".tip_sub small").text("请输入正确的手机号码");
+            return;
+        } */
+        $.ajax({
+            url: pathurl + "/resetPassword/reSendMes?telePhone=" + loginPhone,
+            type: "post",
+            async: false,
+            success: function (data) {
+                if (data.resultCode == 0) {
+                    var second = 60; // 剩余秒数
+                    //然后写一个定时器
+                    var mestimer = window.setInterval(function () {
+                        second--;
+                        $("#notify").removeAttr("onclick");
+                        $("#notify").removeClass("btn_send").addClass("btn_send_off");
+                        $("#notify").html("倒计时" + second + "秒");
+                        if (second == -1) {
+                            $("#notify").attr("onclick", "notify()");
+                            $("#notify").html("重新发送");
+                            clearInterval(mestimer);
+                            $("#notify").css("display", "inline-block");
+                            $("#notify").removeClass("btn_send_off").addClass("btn_send");
+                        }
+                    }, 1000);
+                } else {
+                    $(".tip_sub small").text("发送验证码失败，请联系管理员");
+                }
+            }
+        })
+    }
+
+    //点击重置密码
+    function queryPassWord() {
+        $(".tip_sub_1  small").text("");
+        var account = $.trim($("#account").val());
+        if ("" == account) {
+            $(".tip_sub_1  small").text("请填写用户名或手机号");
+            return;
+        }
+        var picYzm = $.trim($("#picYzm").val());
+        if ("" == picYzm) {
+            $(".tip_sub_1  small").text("验证码不能为空");
+            return;
+        }
+
+        $.ajax({
+            url: pathurl + "/sys/checkVerify?inputStr=" + picYzm + "&account=" + account,
+            type: "post",
+            contentType: 'application/json;charset=UTF-8',
+            async: false,
+            dataType: "json",
+            success: function (m) {
+                $("#userids").empty();
+                var yuz = m.resultCode;
+                if (yuz == "0") {
+                    $("#fromforgetpass").css("display", "none");
+                    $("#forgetpass").css("display", "block");
+                    $("#forgetUserName").val(m.content.mobile);
+                    var userList = m.content.loginUserList;
+
+                    for (var i = 0; i < userList.length; i++) {
+                        var isCheck = "";
+                        if (i == 0) {
+                            isCheck = "checked='checked'";
+                        }
+                        $("#userids").append("<input type='radio' " + isCheck + " value='" + userList[i].userId + "' name='selUserId' style='margin-left:35px;margin-right: 8px;'>" + userList[i].userTypeName + "账号：" + userList[i].userName + "</input>");
+                    }
+                } else if (yuz == "-1") {
+                    $(".tip_sub_1 small").text(m.content.msg);
+                }
+            }
+        })
+    }
+
+    var returnUserId = "";
+
+    //点击重置密码
+    function resetPassWord() {
+        var isMob = /^[1](([3|5|8][\\d])|([4][4,5,6,7,8,9])|([6][2,5,6,7])|([7][^9])|([9][1,8,9]))[\\d]{8}$/;
+        var pathurl = '/schoolcloud-oauthserver';
+        var loginPhone = $.trim($("#account").val());
+        var yzm = $.trim($("#forgetYz").val());
+        //var userId = $.trim($("#userId").val());
+
+        /* if("" == loginPhone){
+            $(".tip_sub small").text("手机号码不能为空");
+            return;
+        }else if(!isMob.test(loginPhone)){
+            $(".tip_sub small").text("请输入正确的手机号码");
+            return;
+        }else */
+        if ("" == yzm) {
+            $(".tip_sub small").text("验证码不能为空");
+            return;
+        }/* else if("" == userId) {
+				$(".tip_sub small").text("请选择找回的账号");
+				return;
+			} else if(yzm!=$("#hidden_memo").val()){
+				$(".tip_sub small").text("验证码不正确");
+				return;
+			} */ else {
+            $.ajax({
+                url: pathurl + "/resetPassword/resetpwd?loginPhone=" + loginPhone + "&yzm=" + yzm,
+                type: "post",
+                contentType: 'application/json;charset=UTF-8',
+                async: false,
+                dataType: "json",
+                success: function (m) {
+                    var yuz = m.resultCode;
+                    if (yuz == "0") {
+                        $("#modPass").css("display", "block");
+                        $("#forgetpass").css("display", "none");
+                        var content = m.content
+                        for (var item in content) {
+                            if (item == 'regular') {
+                                regular = content[item];
+                            } else if (item == 'tips') {
+                                tips = content[item];
+                                $(".tip_sub small").text(tips);
+                            } else {
+                                //returnUserId = content[item];
+                            }
+                        }
+
+                    } else if (yuz == "-1") {
+                        $(".tip_sub small").text('该手机号尚未注册');
+                    } else if (yuz == "-2") {
+                        $(".tip_sub small").text('验证码不正确');
+                    } else if (yuz == "-3") {
+                        $(".tip_sub small").text('验证码已失效');
+                    }
+                }
+            })
+        }
+
+    }
+
+    function resetPassWordNext() {
+        returnUserId = $('input[name="selUserId"]:checked').val();
+        $("#modPass1").css("display", "block");
+        $("#modPass").css("display", "none");
+    }
+
+    function savePasswd() {
+        var pathurl = '/schoolcloud-oauthserver';
+        var newPassword = $("#newPassword").val();
+        var newPasswordAgain = $("#newPasswordAgain").val();
+        var loginPhone = $.trim($("#account").val());
+        var yzm = $.trim($("#forgetYz").val());
+        var re = new RegExp(regular);
+        if ("" == newPassword) {
+            $(".tip_sub small").text("新密码不能为空");
+            return;
+        }
+        if (!re.test(newPassword)) {
+            $(".tip_sub small").text("新密码不符合要求" + tips);
+            return;
+        }
+        if ("" == newPasswordAgain) {
+            $(".tip_sub small").text("确认新密码不能为空");
+            return;
+        }
+        if (!re.test(newPasswordAgain)) {
+            var text = $(".tip_sub small").text("确认新密码不符合要求" + tips);
+            return;
+        }
+        if (newPassword != newPasswordAgain) {
+            $(".tip_sub small").text("两次输入密码不一致");
+            return;
+        }
+        $.ajax({
+            url: pathurl + "/resetPassword/savePasswd?newPassword=" + newPassword + "&newPasswordAgain=" + newPasswordAgain + "&loginPhone=" + loginPhone + "&yzm=" + yzm + "&userId=" + returnUserId,
+            type: "post",
+            contentType: 'application/json;charset=UTF-8',
+            async: false,
+            dataType: "json",
+            success: function (m) {
+                var yuz = m.resultCode;
+                if (yuz == "0") {
+                    $("#modPass1").css("display", "none");
+                    $("#fromforgetpass").css("display", "block");
+                    $(".tip_sub small").text('密码重置成功！');
+                    var timeout = setTimeout(function () {
+                        location.href = pathurl + "/login";
+                    }, 800);
+                } else {
+                    $(".tip_sub small").text('操作失败');
+                }
+            }
+        })
+    }
+
+    //DES加密
+    function encryptByDES(message, key){
+        var keyHex = CryptoJS.enc.Utf8.parse(key);
+        var encrypted = CryptoJS.DES.encrypt(message, keyHex, {
+            mode: CryptoJS.mode.ECB,
+            padding: CryptoJS.pad.Pkcs7
+        });
+        return encrypted.ciphertext.toString(CryptoJS.enc.Base64);
+    }
+    //字符串转byte数组
+    function stringToBytes( str ) {
+
+        var ch, st, re = [];
+        for (var i = 0; i < str.length; i++ ) {
+            ch = str.charCodeAt(i);  // get char
+            st = [];                 // set up "stack"
+
+            do {
+                st.push( ch & 0xFF );  // push byte to stack
+                ch = ch >> 8;          // shift value down by 1 byte
+            }
+
+            while ( ch );
+            // add stack contents to result
+            // done because chars have "wrong" endianness
+            re = re.concat( st.reverse() );
+        }
+        // return an array of bytes
+        return re;
+    }
+
+
+    /*]]>*/
+</script>
+</body>
+</html>
