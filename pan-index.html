@@ -1,0 +1,73 @@
+
+<!DOCTYPE html>
+<html ng-controller="RootController">
+<head>
+<title></title>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<!-- 以下meta会导致ShareWeb手机访问预览过大，暂先屏蔽 -->
+<!--<meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, user-scalable=yes" />-->
+<!-- Compatible With 360WebBrowser -->
+<meta name="renderer" content="webkit">
+<link rel="shortcut icon" type="image/x-icon" ng-href="{{favicon}}" />
+<link rel="stylesheet" href="/res/libs/webuploader/webuploader.css" />
+<link rel="stylesheet" href="/res/build/css/atom.css" />
+<link rel="stylesheet" href="/res/build/css/reset.css" />
+<link rel="stylesheet" href="/res/build/css/common.css" />
+<link rel="stylesheet" href="/res/build/css/layout.css" />
+<link rel="stylesheet" href="/res/build/css/ui.css" />
+<link rel="stylesheet" href="/res/build/css/icon.css" />
+<link rel="stylesheet" href="/res/build/css/application.css" />
+<link rel="stylesheet" href="/res/build/css/yui.css" />
+<link rel="stylesheet" href="/res/libs/fullcalendar/fullcalendar.css" />
+<link rel="stylesheet" type="text/css" ng-href="{{cssOEM}}" />
+<link rel="stylesheet" type="text/css" media="print" href="/res/build/css/print.css" />
+<script type="text/javascript" src="/res/libs/base64.min.js"></script>
+<!--[if IE 8]>
+<script type="text/javascript" src="/res/libs/es5-shim.min.js"></script>
+<script type="text/javascript" src="/res/libs/es5-sham.custom.min.js"></script>
+<script type="text/javascript" src="/res/libs/jquery-1.12.1.min.js"></script>
+<script type="text/javascript" src="/res/libs/json2.custom.min.js"></script>
+<![endif]-->
+<!--[if !IE 8]>
+<script type="text/javascript" src="/res/libs/jquery-2.1.4.min.js"></script>
+<![endif]-->
+<!--[if IE 9]>
+<script type="text/javascript" src="/res/libs/pdfjs-dist/web/compatibility.js"></script>
+<![endif]-->
+<!--[if gte IE 9]><!-->
+<script type="text/javascript" src="/res/libs/pdfjs-dist/build/pdf.combined.js"></script>
+<script type="text/javascript" src="/res/libs/hls.js/dist/hls.min.js"></script>
+<!-- 设置PDFJS -->
+<script type="text/javascript">
+PDFJS.cMapUrl = '/res/libs/pdfjs-dist/cmaps/';
+PDFJS.cMapPacked = true;
+PDFJS.workerSrc = '/res/libs/pdfjs-dist/build/pdf.worker.entry.js';
+</script>
+<!--<![endif]-->
+<script type="text/javascript" src="/res/libs/es6-shim.min.js"></script>
+<script type="text/javascript" src="/res/libs/es6-sham.min.js"></script>
+<script type="text/javascript" src="/res/libs/es6-promise.auto.min.js"></script>
+<script type="text/javascript" src="/res/libs/regenerator-runtime/runtime.js"></script>
+<script type="text/javascript" src="/res/libs/lodash.min.js"></script>
+<script type="text/javascript" src="/res/libs/require.js" data-main="/res/build/js/bootstrap"></script>
+</head>
+<body class="atom-no-scroll">
+<!-- Tooltip提示 -->
+<div class="layout-tooltips" ng-controller="MessageController">
+<!-- IE8 因性能原因，as-tooltip未来得及隐藏，因此将class加上ng-hide并设定ng-show条件 -->
+<div as-tooltip ng-attr-type="{{message.type}}" class="as-tooltip ng-hide" ng-show="message" ng-repeat-start="message in messages"
+as-tooltip-message="message.text"></div>
+<br ng-repeat-end/>
+</div>
+<!-- 视图加载到此处 -->
+<div ui-view class="layout-ui-view">
+<div style="position: fixed;top: 0;right: 0;bottom: 0;left: 0;background:#FFF;">
+<div style="position:absolute;top:50%;left:50%;margin-left:-32px;margin-top:-48px;">
+<img src="/res/img/loading.gif" alt="Loading">
+<span style="display:block;font-size:16px;">Loading...</span>
+</div>
+</div>
+</div>
+</body>
+</html>
